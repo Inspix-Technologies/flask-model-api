@@ -32,7 +32,7 @@ def predict():
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="Flask API exposing YOLOv5 model")
-    parser.add_argument("--port", default=5000, type=int, help="port number")
+    parser.add_argument("--port", default=8001, type=int, help="port number")
     args = parser.parse_args()
     print('downloadings')
     model = torch.hub.load("ultralytics/yolov5", "yolov5s",
