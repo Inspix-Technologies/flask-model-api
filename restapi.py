@@ -7,6 +7,7 @@ import io
 import torch
 from PIL import Image
 from flask import Flask, request
+import base64
 
 app = Flask(__name__)
 
