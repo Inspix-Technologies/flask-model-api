@@ -10,7 +10,6 @@ from flask import Flask, request
 import base64
 
 app = Flask(__name__)
-
 DETECTION_URL = "/inspix-models/test"
 
 
