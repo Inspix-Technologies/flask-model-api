@@ -1,0 +1,8 @@
+without image preprocessing:
+80ms-90ms
+
+with image preprocessing:
+80-100ms
+
+with model prediction:
+755ms
