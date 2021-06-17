@@ -17,33 +17,39 @@ DETECTION_URL = "/inspix-models/test"
 socket_io = SocketIO(app, cors_allowed_origins="*")
 
 
+def preprocess_image(base64img):
+    splitted_base64 = base64img.split(',')
+    filtered_base64 = splitted_base64[0]
+    if (len(splitted_base64) > 1):
+        filtered_base64 = splitted_base64[1]
+    base64_bytes = filtered_base64.encode('ascii')
+    img_data = base64.b64decode(base64_bytes)
+    img = Image.open(io.BytesIO(img_data))
+    return img
+
+
+def get_predictions(img):
+    results = model(img, size=640)
+    return results.pandas().xyxy[0].to_json(orient="records")
+
+
 @app.route(DETECTION_URL, methods=["POST"])
 @cross_origin()
 def predict():
-    # if not request.method == "POST":
-    #     return
     base64img = request.json['base64image']
+    img = preprocess_image(base64img)
 
-    base64_bytes = base64img.encode('ascii')
-    img_data = base64.b64decode(base64_bytes)
-
-    img = Image.open(io.BytesIO(img_data))
-
-    results = model(img, size=640)  # reduce size=320 for faster inference
-    return results.pandas().xyxy[0].to_json(orient="records")
+    predictions = get_predictions(img)
+    return predictions
 
 
 @socket_io.on('predict')
 def handle_predict(json):
     base64img = json['base64image']
-    filtered_base64 = base64img.split(',')[1]
-    base64_bytes = filtered_base64.encode('ascii')
-    img_data = base64.b64decode(base64_bytes)
+    img = preprocess_image(base64img)
 
-    img = Image.open(io.BytesIO(img_data))
-
-    results = model(img, size=640)
-    emit('predict-result', results.pandas().xyxy[0].to_json(orient="records"))
+    predictions = get_predictions(img)
+    emit('predict-result', predictions)
 
 
 if __name__ == "__main__":
