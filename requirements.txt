@@ -10,6 +10,7 @@ scipy>=1.4.1
 torch
 torchvision
 tqdm
+flask_socketio
 
 # logging -------------------------------------
 tensorboard
